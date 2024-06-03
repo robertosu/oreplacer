@@ -1,0 +1,4 @@
+name: oreplacer
+version: '${project.version}'
+main: net.nolife.oreplacer.Oreplacer
+api-version: '1.20'
