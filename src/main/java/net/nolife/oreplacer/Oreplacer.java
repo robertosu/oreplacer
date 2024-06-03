@@ -42,19 +42,18 @@ public class Oreplacer extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onChunkLoad(ChunkLoadEvent event) {
-        if (event.isNewChunk()) {
-            World world = event.getWorld();
-            if (world.getName().equals("mundo")) {
-                int chunkX = event.getChunk().getX();
-                int chunkZ = event.getChunk().getZ();
+    public void onChunkPopulate(ChunkPopulateEvent event) {
+        World world = event.getWorld();
+        if (world.getName().equals("mundo")) {
+            int chunkX = event.getChunk().getX();
+            int chunkZ = event.getChunk().getZ();
+            Random random = new Random();
 
-                // Programar una tarea asíncrona para generar las vetas
-                getServer().getScheduler().runTaskAsynchronously(this, () -> {
-                    Random random = new Random();
-                    oreGenerator.generateOre(world, random, chunkX, chunkZ);
-                });
-            }
+            // Programar una tarea asíncrona para generar las vetas
+            getServer().getScheduler().runTaskAsynchronously(this, () -> {
+
+                oreGenerator.generateOre(world, random, chunkX, chunkZ);
+            });
         }
     }
 }

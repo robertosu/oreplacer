@@ -2,6 +2,7 @@ package net.nolife.oreplacer;
 
 import io.th0rgal.oraxen.OraxenPlugin;
 import io.th0rgal.oraxen.api.OraxenBlocks;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,10 +32,9 @@ public class OreGenerator {
 
     public void generateOre(World world, Random random, int chunkX, int chunkZ) {
         int maxHeight = world.getMaxHeight();
-        BlockData oreBlockData = OraxenBlocks.getOraxenBlockData(oreBlockId);
 
-        if (oreBlockData == null) {
-            getLogger().info("No es un ID VALIDO!");
+        if (oreBlockId == null) {
+            // El ID del bloque de mineral no es válido
             return;
         }
 
@@ -45,27 +45,31 @@ public class OreGenerator {
             int y = minHeight + random.nextInt(maxHeight - minHeight);
 
             Location oreLocation = new Location(world, x, y, z);
-            generateVein(oreLocation, oreBlockData, random);
+            generateVein(oreLocation, oreBlockId, random);
             veinCount++;
         }
     }
 
-    private void generateVein(Location center, BlockData oreBlockData, Random random) {
+    private void generateVein(Location center, String oreBlockId, Random random) {
         World world = center.getWorld();
+        int veinSize = 8 + random.nextInt(8); // Tamaño de la veta (8-15 bloques)
         int radius = 3 + random.nextInt(3); // Radio de la veta (máximo 5)
 
-        for (int x = center.getBlockX() - radius; x <= center.getBlockX() + radius; x++) {
-            for (int y = center.getBlockY() - radius; y <= center.getBlockY() + radius; y++) {
-                for (int z = center.getBlockZ() - radius; z <= center.getBlockZ() + radius; z++) {
-                    Location location = new Location(world, x, y, z);
-                    double distance = location.distance(center);
+        for (int i = 0; i < veinSize; i++) {
+            int x = center.getBlockX() + random.nextInt(radius * 2 + 1) - radius;
+            int y = center.getBlockY() + random.nextInt(radius * 2 + 1) - radius;
+            int z = center.getBlockZ() + random.nextInt(radius * 2 + 1) - radius;
+            Location location = new Location(world, x, y, z);
 
-                    if (distance < radius && random.nextDouble() < 0.5) {
-                        Block block = location.getBlock();
-                        if (replaceableBlocks.contains(block.getType())) {
-                            block.setBlockData(oreBlockData);
-                        }
-                    }
+            Block block = location.getBlock();
+            if (replaceableBlocks.contains(block.getType())) {
+                try {
+                    OraxenBlocks.place(oreBlockId, location);
+                    System.out.println("Bloque de mineral colocado en: " + location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ());
+
+                } catch (Exception e) {
+                    System.out.println("Error al colocar bloque de mineral en: " + location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ());
+                    e.printStackTrace();
                 }
             }
         }
