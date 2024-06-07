@@ -1,4 +1,10 @@
-name: oreplacer
-version: '${project.version}'
-main: net.nolife.oreplacer.Oreplacer
-api-version: '1.20'
+name: Itemrarity
+version: 1.0
+main: cl.nightcore.itemrarity.Itemrarity
+api-version: 1.20
+depend: [AuraSkills]
+
+commands:
+  identify:
+    description: Identifica el item en tu mano principal.
+    usage: /identify (sostener item en la mano)"
